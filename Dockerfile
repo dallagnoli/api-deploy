@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package.json .
 RUN npm install
 
-COPY index.js .
+COPY index.js ./src
 
 EXPOSE 3000
-RUN ["npm", "start"]
+CMD ["npm", "start"]
