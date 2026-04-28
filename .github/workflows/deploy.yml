@@ -12,16 +12,16 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: build
-        run: docker build -t api:latest .
+        run: sudo docker build -t api:latest .
 
       - name: stop old
         run: |
-          docker stop api || true
-          docker rm api || true
+          sudo docker stop api || true
+          sudo docker rm api || true
 
       - name: run new
         run: |
-          docker run -d \
+          sudo docker run -d \
             --name api \
             -p 3000:3000 \
             --restart unless-stopped \
