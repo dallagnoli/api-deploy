@@ -1,4 +1,4 @@
-FROM alpine:18-latest
+FROM alpine:latest
 
 WORKDIR /app
 
