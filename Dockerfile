@@ -5,7 +5,9 @@ WORKDIR /app
 COPY package.json .
 RUN npm install
 
-COPY index.js ./src
+RUN mkdir -p src
+COPY index.js ./src/index.js
 
 EXPOSE 3000
+
 CMD ["npm", "start"]
