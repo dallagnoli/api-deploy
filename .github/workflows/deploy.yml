@@ -11,18 +11,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: build
-        run: sudo docker build -t api:latest .
+      - name: Build Application
+        run: docker build -t api:${{ github.sha }} .
 
-      - name: stop old
+      - name: (Re)start Application
         run: |
-          sudo docker stop api || true
-          sudo docker rm api || true
-
-      - name: run new
-        run: |
-          sudo docker run -d \
+          docker stop api || true
+          docker rm api || true
+          docker run -d \
             --name api \
             -p 3000:3000 \
             --restart unless-stopped \
-            api:latest
+            api:${{ github.sha }}
