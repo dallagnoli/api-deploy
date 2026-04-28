@@ -2,36 +2,24 @@ name: deploy
 
 on:
   push:
-    branches: [main]
+    branches: [runner-test]
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: build image
-        run: docker build -t api:latest .
+      - name: Build Application
+        run: docker build -t api:${{ github.sha }} .
 
-      - name: save image
-        run: docker save api:latest | gzip > image.tar.gz
-
-      - name: send image to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.HOST }}
-          username: gab
-          key: ${{ secrets.SSH_KEY }}
-          source: image.tar.gz
-          target: /home/gab/
-
-      - name: deploy
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.HOST }}
-          username: gab
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            cd /home/gab
-            bash deploy.sh
+      - name: (Re)start Application
+        run: |
+          docker stop api || true
+          docker rm api || true
+          docker run -d \
+            --name api \
+            -p 3000:3000 \
+            --restart unless-stopped \
+            api:${{ github.sha }}
